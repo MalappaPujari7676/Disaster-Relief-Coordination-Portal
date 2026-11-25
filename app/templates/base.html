@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Relief Portal{% endblock %} · Disaster Relief Coordination</title>
+  <style>
+    :root { --bg:#f5f6f8; --card:#fff; --ink:#1d2433; --mute:#6b7385; --brand:#c0392b; --line:#e2e5ec; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#14171f; --card:#1d222e; --ink:#e8eaf0; --mute:#9aa3b5; --line:#2e3547; } }
+    * { box-sizing:border-box; }
+    body { margin:0; font:16px/1.5 system-ui,sans-serif; background:var(--bg); color:var(--ink); }
+    nav { background:var(--brand); color:#fff; padding:.75rem 1rem; display:flex; flex-wrap:wrap; gap:1rem; align-items:center; }
+    nav a { color:#fff; text-decoration:none; } nav .brand { font-weight:700; margin-right:auto; }
+    main { max-width:960px; margin:1.5rem auto; padding:0 1rem; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1rem 1.25rem; margin-bottom:1rem; overflow-x:auto; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:1rem; }
+    .stat b { display:block; font-size:2rem; color:var(--brand); }
+    table { width:100%; border-collapse:collapse; } th,td { text-align:left; padding:.5rem; border-bottom:1px solid var(--line); vertical-align:top; }
+    label { display:block; margin:.75rem 0 .25rem; font-weight:600; }
+    input,select,textarea { width:100%; padding:.5rem; border:1px solid var(--line); border-radius:6px; background:var(--card); color:var(--ink); font:inherit; }
+    input[type=checkbox] { width:auto; }
+    button,.btn { background:var(--brand); color:#fff; border:0; border-radius:6px; padding:.5rem 1rem; cursor:pointer; text-decoration:none; display:inline-block; font:inherit; }
+    button.small { padding:.2rem .6rem; font-size:.85rem; }
+    .flash { padding:.75rem 1rem; border-radius:6px; margin-bottom:1rem; }
+    .flash.success { background:#d4edda; color:#155724; } .flash.error { background:#f8d7da; color:#721c24; }
+    .badge { padding:.1rem .5rem; border-radius:99px; font-size:.8rem; background:var(--line); }
+    .critical,.high { color:var(--brand); font-weight:700; } .muted { color:var(--mute); }
+    form.inline { display:inline-flex; gap:.25rem; align-items:center; } form.inline select,form.inline input { width:auto; }
+  </style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="{{ url_for('main.index') }}">🆘 Relief Portal</a>
+  <a href="{{ url_for('incidents.list_incidents') }}">Incidents</a>
+  <a href="{{ url_for('requests.create') }}">Request Help</a>
+  {% if g.user %}
+    <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('requests.list_requests') }}">Requests</a>
+    <a href="{{ url_for('resources.list_resources') }}">Resources</a>
+    {% if g.user.role in ('admin','coordinator') %}<a href="{{ url_for('volunteers.list_volunteers') }}">Volunteers</a>{% endif %}
+    {% if g.user.role == 'volunteer' %}<a href="{{ url_for('volunteers.profile') }}">My Profile</a>{% endif %}
+    <a href="{{ url_for('auth.logout') }}">Log out ({{ g.user.name }})</a>
+  {% else %}
+    <a href="{{ url_for('auth.login') }}">Log in</a>
+    <a href="{{ url_for('auth.register') }}">Register</a>
+  {% endif %}
+</nav>
+<main>
+  {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="flash {{ category }}">{{ message }}</div>
+  {% endfor %}
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ incident.title }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{{ incident.title }}</h1>
+  <p><span class="badge">{{ incident.type }}</span> <span class="badge">{{ incident.status }}</span>
+     severity {{ incident.severity }}/5 · {{ incident.location }}</p>
+  <p>{{ incident.description }}</p>
+  {% if g.user and g.user.role in ('admin','coordinator') %}
+  <form class="inline" method="post" action="{{ url_for('incidents.set_status', incident_id=incident.id) }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <select name="status">{% for s in ('active','contained','resolved') %}<option {{ 'selected' if s == incident.status }}>{{ s }}</option>{% endfor %}</select>
+    <button class="small">Update</button></form>
+  {% endif %}
+</div>
+<div class="card"><h2>Help requests ({{ requests|length }})</h2>
+  <table>{% for r in requests %}<tr><td>{{ r.need_type }}</td><td class="{{ r.urgency }}">{{ r.urgency }}</td><td>{{ r.status }}</td></tr>
+  {% else %}<tr><td class="muted">None yet.</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>Resources</h2>
+  <table>{% for r in resources %}<tr><td>{{ r.name }}</td><td>{{ r.quantity }} {{ r.unit }}</td><td>{{ r.location }}</td></tr>
+  {% else %}<tr><td class="muted">None allocated.</td></tr>{% endfor %}</table></div>
+{% endblock %}

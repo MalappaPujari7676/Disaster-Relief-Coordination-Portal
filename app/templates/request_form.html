@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Request help{% endblock %}
+{% block content %}
+<div class="card"><h1>Request help</h1>
+<p class="muted">In immediate danger? Call your local emergency number first.</p>
+<form method="post">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <label>Your name</label><input name="requester_name" required>
+  <label>Phone / contact</label><input name="contact" required>
+  <label>Related incident</label>
+  <select name="incident_id"><option value="">— not listed —</option>
+    {% for i in incidents %}<option value="{{ i.id }}">{{ i.title }}</option>{% endfor %}</select>
+  <label>What do you need?</label><select name="need_type">{% for n in needs %}<option>{{ n }}</option>{% endfor %}</select>
+  <label>Urgency</label><select name="urgency">{% for u in urgencies %}<option {{ 'selected' if u == 'medium' }}>{{ u }}</option>{% endfor %}</select>
+  <label>Details / address</label><textarea name="description" rows="4"></textarea>
+  <p><button>Submit request</button></p>
+</form></div>
+{% endblock %}

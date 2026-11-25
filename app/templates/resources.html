@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Resources{% endblock %}
+{% block content %}
+<h1>Resources</h1>
+{% if g.user.role in ('admin','coordinator') %}<p><a class="btn" href="{{ url_for('resources.create') }}">+ Add resource</a></p>{% endif %}
+<div class="card"><table>
+<tr><th>Item</th><th>Category</th><th>Stock</th><th>Location</th><th>Incident</th>{% if g.user.role in ('admin','coordinator') %}<th>Adjust</th>{% endif %}</tr>
+{% for r in resources %}<tr>
+  <td>{{ r.name }}</td><td>{{ r.category }}</td>
+  <td {% if r.quantity <= r.low_threshold %}class="critical"{% endif %}>{{ r.quantity }} {{ r.unit }}{% if r.quantity <= r.low_threshold %} ⚠{% endif %}</td>
+  <td>{{ r.location }}</td><td>{{ r.incident_title or '—' }}</td>
+  {% if g.user.role in ('admin','coordinator') %}<td>
+    <form class="inline" method="post" action="{{ url_for('resources.adjust', resource_id=r.id) }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <input type="number" name="delta" value="-1" style="width:5rem"><button class="small">Apply</button></form></td>{% endif %}
+</tr>{% else %}<tr><td colspan="6" class="muted">No resources.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

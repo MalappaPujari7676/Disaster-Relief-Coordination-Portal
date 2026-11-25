@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Requests{% endblock %}
+{% block content %}
+<h1>Help requests</h1>
+<p>Filter: <a href="{{ url_for('requests.list_requests') }}">all</a> ·
+{% for s in ('pending','assigned','fulfilled','cancelled') %}<a href="{{ url_for('requests.list_requests', status=s) }}">{{ s }}</a> {% endfor %}</p>
+<div class="card"><table>
+<tr><th>Urgency</th><th>Need</th><th>Requester</th><th>Status</th><th>Action</th></tr>
+{% for r in requests %}<tr>
+  <td class="{{ r.urgency }}">{{ r.urgency }}</td>
+  <td>{{ r.need_type }}<br><span class="muted">{{ r.description }}</span></td>
+  <td>{{ r.requester_name }}<br><span class="muted">{{ r.contact }}</span></td>
+  <td>{{ r.status }}{% if r.volunteer_name %}<br><span class="muted">→ {{ r.volunteer_name }}</span>{% endif %}</td>
+  <td>
+    {% if g.user.role in ('admin','coordinator') and r.status in ('pending','assigned') %}
+    <form class="inline" method="post" action="{{ url_for('requests.assign', request_id=r.id) }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <select name="volunteer_id">{% for v in volunteers %}<option value="{{ v.id }}">{{ v.name }}</option>{% endfor %}</select>
+      <button class="small">Assign</button></form>
+    {% endif %}
+    {% if r.status != 'fulfilled' and (g.user.role in ('admin','coordinator') or r.assigned_to == g.user.id) %}
+    <form class="inline" method="post" action="{{ url_for('requests.set_status', request_id=r.id) }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}"><input type="hidden" name="status" value="fulfilled">
+      <button class="small">Fulfilled</button></form>
+    {% endif %}
+  </td></tr>
+{% else %}<tr><td colspan="5" class="muted">No requests.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}New incident{% endblock %}
+{% block content %}
+<div class="card"><h1>New incident</h1>
+<form method="post">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <label>Title</label><input name="title" required>
+  <label>Type</label><select name="type">{% for t in types %}<option>{{ t }}</option>{% endfor %}</select>
+  <label>Severity (1-5)</label><input type="number" name="severity" min="1" max="5" value="3">
+  <label>Location</label><input name="location" required>
+  <label>Description</label><textarea name="description" rows="4"></textarea>
+  <p><button>Create</button></p>
+</form></div>
+{% endblock %}

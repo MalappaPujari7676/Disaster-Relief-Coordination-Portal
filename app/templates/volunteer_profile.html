@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}My profile{% endblock %}
+{% block content %}
+<div class="card"><h1>Volunteer profile</h1>
+<form method="post">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <label>Skills</label><input name="skills" value="{{ vol.skills or '' }}">
+  <label>Area</label><input name="location" value="{{ vol.location or '' }}">
+  <label><input type="checkbox" name="available" {{ 'checked' if vol.available }}> Available for assignments</label>
+  <p><button>Save</button></p>
+</form></div>
+{% endblock %}

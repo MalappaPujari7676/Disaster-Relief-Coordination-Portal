@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Volunteers{% endblock %}
+{% block content %}
+<h1>Volunteers</h1>
+<div class="card"><table>
+<tr><th>Name</th><th>Contact</th><th>Skills</th><th>Area</th><th>Available</th></tr>
+{% for v in volunteers %}<tr><td>{{ v.name }}</td><td>{{ v.email }}<br>{{ v.phone or '' }}</td>
+  <td>{{ v.skills }}</td><td>{{ v.location }}</td><td>{{ '✅' if v.available else '⛔' }}</td></tr>
+{% else %}<tr><td colspan="5" class="muted">No volunteers yet.</td></tr>{% endfor %}
+</table></div>
+{% endblock %}

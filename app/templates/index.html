@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card">
+  <h1>Disaster Relief Coordination Portal</h1>
+  <p class="muted">Connecting people in need with volunteers, supplies and coordinators.</p>
+  <a class="btn" href="{{ url_for('requests.create') }}">I need help</a>
+  <a class="btn" href="{{ url_for('auth.register') }}">Volunteer</a>
+</div>
+<div class="grid">
+  <div class="card stat"><b>{{ stats.active_incidents }}</b>Active incidents</div>
+  <div class="card stat"><b>{{ stats.pending_requests }}</b>Pending requests</div>
+  <div class="card stat"><b>{{ stats.fulfilled_requests }}</b>Fulfilled</div>
+  <div class="card stat"><b>{{ stats.available_volunteers }}</b>Volunteers ready</div>
+</div>
+<div class="card">
+  <h2>Current incidents</h2>
+  {% for i in incidents %}
+    <p><a href="{{ url_for('incidents.detail', incident_id=i.id) }}">{{ i.title }}</a>
+    — {{ i.location }} <span class="badge">severity {{ i.severity }}</span></p>
+  {% else %}<p class="muted">No active incidents.</p>{% endfor %}
+</div>
+{% endblock %}
